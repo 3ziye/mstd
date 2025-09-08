@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="source">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="source\mstd">
+      <UniqueIdentifier>{74061c7c-6c26-48e9-a706-734eb49ee547}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="base.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mstd\string.cpp">
+      <Filter>source\mstd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mstd\base64.cpp">
+      <Filter>source\mstd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mstd\crc32_sse.cpp">
+      <Filter>source\mstd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mstd\crc32.cpp">
+      <Filter>source\mstd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mstd\hex.cpp">
+      <Filter>source\mstd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mstd\ipstring.cpp">
+      <Filter>source\mstd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mstd\system.cpp">
+      <Filter>source\mstd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mstd\string_convert.cpp">
+      <Filter>source\mstd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mstd\path_string.cpp">
+      <Filter>source\mstd</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\mstd\platform.h">
+      <Filter>source\mstd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mstd\string.h">
+      <Filter>source\mstd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mstd\base64.h">
+      <Filter>source\mstd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mstd\crc32.h">
+      <Filter>source\mstd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mstd\hex.h">
+      <Filter>source\mstd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mstd\ipstring.h">
+      <Filter>source\mstd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mstd\string_convert.h">
+      <Filter>source\mstd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mstd\system.h">
+      <Filter>source\mstd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mstd\path_string.h">
+      <Filter>source\mstd</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
