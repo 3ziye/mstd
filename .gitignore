@@ -1,0 +1,5 @@
+base/Debug
+base/x64
+base/.vs
+base/mstd.vcxproj.user
+build

@@ -2,7 +2,9 @@
 //
 
 #include <iostream>
+#define MSTD_WINDOWS
 #include "mstd/crc32.h"
+
 
 int main() {
     //crc要调整
