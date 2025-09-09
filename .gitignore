@@ -3,3 +3,5 @@ base/x64
 base/.vs
 base/mstd.vcxproj.user
 build
+build-linux
+build-mac
