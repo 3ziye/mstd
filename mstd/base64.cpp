@@ -1,5 +1,6 @@
 
 #include "base64.h"
+#include <cstdint>
 
 namespace mstd {
 

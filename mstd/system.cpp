@@ -258,14 +258,14 @@ bool get_process_path(std::wstring& filename)
 #elif defined(linux) || defined(__linux) || defined(__linux__)
 	char buffer[kMaxPath];
 	std::size_t length = readlink("/proc/self/exe", buffer, sizeof(buffer) - 1);
-	std::wstring wstr = stdxx::to_wstring(buffer);
+	std::wstring wstr = mstd::to_wstring(buffer);
 	wstr.copy(the_filename, wstr.length() > sizeof(the_filename) - 1 ? sizeof(the_filename) - 1 : wstr.length(), 0);
 #elif defined(__FreeBSD__)
 	char buffer[kMaxPath];
 	int mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1 };
 	size_t length = sizeof(buffer);
 	sysctl(mib, 4, buffer, &length, NULL, 0);
-	std::wstring wstr = stdxx::to_wstring(buffer);
+	std::wstring wstr = mstd::to_wstring(buffer);
 	wstr.copy(the_filename, wstr.length() > sizeof(the_filename) - 1 ? sizeof(the_filename) - 1 : wstr.length(), 0);
 #elif defined(__APPLE__)
 	size_t length = 0;

@@ -17,8 +17,13 @@
 #include <string>
 #include <sstream>
 #include <stdarg.h>
+#include <cstdint>
 
 #if defined(STDXX_POSIX)
+#include <fnmatch.h>
+#endif
+
+#ifdef MSTD_LINUX
 #include <fnmatch.h>
 #endif
 

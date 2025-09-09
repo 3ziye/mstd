@@ -1,0 +1,25 @@
+{
+    "name": "CMake C++ Environment (Ubuntu 24.04)",
+    "build": {
+        "dockerfile": "../Dockerfile",
+        "args": {
+            "USER_UID": "${localEnv:UID}",  // 自动获取 WSL 本地用户 UID（jacky 的 UID=1000）
+            "USER_GID": "${localEnv:GID}"   // 自动获取 WSL 本地用户 GID（jacky 的 GID=1000）
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.cpptools",
+                "ms-vscode.cpptools-extension-pack",
+                "ms-vscode.cmake-tools",
+                "twxs.cmake"
+            ]
+        }
+    },
+    "mounts": [
+        "source=${localWorkspaceFolder},target=/workspace,type=bind"  // 挂载本地项目到容器
+    ],
+    "runArgs": ["--privileged"],  // 可选：赋予容器更多权限，避免权限不足问题
+    "updateRemoteUserUID": true  // 自动同步本地 UID 到容器，避免权限冲突
+}

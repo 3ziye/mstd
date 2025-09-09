@@ -28,6 +28,10 @@
 # pragma comment(lib, "shlwapi.lib")
 #endif
 
+#ifdef MSTD_LINUX
+#define _countof(arr) (sizeof(arr) / sizeof(arr[0]))
+#endif
+
 namespace mstd {
 	std::string format(const char *fmt, ...)
 	{

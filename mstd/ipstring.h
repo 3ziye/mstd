@@ -10,6 +10,7 @@
 #include <cstdio>
 #include <algorithm>
 #include <string>
+#include <cstdint>
 
 namespace mstd {
 
