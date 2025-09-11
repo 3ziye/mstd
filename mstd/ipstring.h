@@ -10,7 +10,7 @@
 #include <cstdio>
 #include <algorithm>
 #include <string>
-#include <cstdint>
+#include <stdint.h>
 
 namespace mstd {
 

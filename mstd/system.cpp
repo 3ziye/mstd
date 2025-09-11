@@ -31,11 +31,11 @@
 #endif
 
 
-namespace stdxx
+namespace mstd
 {
 uint64_t get_tick_count()
 {
-#ifdef WIN32
+#ifdef MSTD_WINDOWS
     return GetTickCount();
 #else
     using namespace std::chrono;
@@ -48,7 +48,7 @@ int64_t get_tick_count_ms()
 {
 // 从1601年1月1日0:0:0:000到1970年1月1日0:0:0:000的时间(单位100ns)
 #define EPOCHFILETIME   (11644473600000000ULL)
-#ifdef WIN32
+#ifdef MSTD_WINDOWS
  	FILETIME ft;
  	LARGE_INTEGER li;
  	int64_t mseconds = 0;
@@ -67,28 +67,26 @@ int64_t get_tick_count_ms()
 	return 0;
 }
 
-uint32_t get_cpu_cores()
-{
+uint32_t get_cpu_cores() {
     return std::thread::hardware_concurrency();
 }
 
 //获取当前进程id
 uint32_t get_current_process_id() {
-#ifdef WIN32
+#ifdef MSTD_WINDOWS
     return GetCurrentProcessId();
-#elif defined(linux) || defined(__linux) || defined(__linux__)
+#elif MSTD_LINUX
     return getpid();
 #else
 
 #endif
 }
 
-uint32_t get_current_thread_id()
-{
-#ifdef WIN32
+uint32_t get_current_thread_id() {
+#ifdef MSTD_WINDOWS
     return GetCurrentThreadId();
 
-#elif defined(linux) || defined(__linux) || defined(__linux__)
+#elif MSTD_LINUX
 	return pthread_self();
 #else
 	std::ostringstream oss;
@@ -100,8 +98,7 @@ uint32_t get_current_thread_id()
 }
 
 //
-void sleep(const uint32_t milliseconds)
-{
+void sleep(const uint32_t milliseconds) {
     std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
 }
 
@@ -218,9 +215,9 @@ std::string shell_cmd(const std::string &cmd)
 bool get_process_path(std::string& filename)
 {
 	char the_filename[260] = { 0 };
-#ifdef WIN32
+#ifdef MSTD_WINDOWS
     DWORD length = ::GetModuleFileNameA(nullptr, the_filename, MAX_PATH);
-#elif defined(linux) || defined(__linux) || defined(__linux__)
+#elif MSTD_LINUX
 	std::size_t length = readlink("/proc/self/exe", the_filename, sizeof(the_filename) - 1);
 #elif defined(__FreeBSD__)
 	int mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1 };
@@ -255,38 +252,18 @@ bool get_process_path(std::wstring& filename)
 	wchar_t the_filename[kMaxPath];
 #ifdef MSTD_WINDOWS
     DWORD length = ::GetModuleFileNameW(nullptr, the_filename, kMaxPath);
-#elif defined(linux) || defined(__linux) || defined(__linux__)
-	char buffer[kMaxPath];
-	std::size_t length = readlink("/proc/self/exe", buffer, sizeof(buffer) - 1);
-	std::wstring wstr = mstd::to_wstring(buffer);
-	wstr.copy(the_filename, wstr.length() > sizeof(the_filename) - 1 ? sizeof(the_filename) - 1 : wstr.length(), 0);
-#elif defined(__FreeBSD__)
-	char buffer[kMaxPath];
-	int mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1 };
-	size_t length = sizeof(buffer);
-	sysctl(mib, 4, buffer, &length, NULL, 0);
-	std::wstring wstr = mstd::to_wstring(buffer);
-	wstr.copy(the_filename, wstr.length() > sizeof(the_filename) - 1 ? sizeof(the_filename) - 1 : wstr.length(), 0);
-#elif defined(__APPLE__)
-	size_t length = 0;
-	_NSGetExecutablePath(nullptr, &length);
-	if (length <= 1) {
-		return false;
-}
-
-	std::string executable_path(length - 1, std::string::value_type());
-	int rv = _NSGetExecutablePath(&executable_path[0], &length);
-	if (rv != 0) {
-		return false;
-	}
-	std::wstring wstr = stdxx::to_wstring(executable_path);
-	wstr.copy(the_filename, wstr.length() > sizeof(the_filename) - 1 ? sizeof(the_filename) - 1 : wstr.length(), 0);
-#endif
-    if (length > 0 && length < kMaxPath) {
-        filename = the_filename;
-        return true;
+	if (length > 0 && length < kMaxPath) {
+		filename = the_filename;
+		return true;
     }
-
+	
+#elif MSTD_LINUX
+	std::string name;
+	if (get_process_path(name)) {
+		filename = mstd::u8_to_wstring(name);
+		return true;
+	}
+#endif
     return false;
 }
 

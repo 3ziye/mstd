@@ -20,6 +20,7 @@ namespace mstd
 #endif
 
 #ifdef _WIN64
+
 static const uint32_t g_crc_table[1][256] = { {
     0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,
     0xe963a535, 0x9e6495a3, 0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988,
@@ -159,11 +160,9 @@ uint32_t crc32_sse(const uint8_t* buf, size_t len, uint32_t crc0)
     return ~crc0;
 
 }
-#else
-    uint32_t crc32_sse(const uint8_t* buf, size_t len, uint32_t crc0) {
-        // not apply
-        return 0;
-    }
+
+};
+
 #endif
-    }; // namespace ccbl
-}
+
+} // namespace ccbl

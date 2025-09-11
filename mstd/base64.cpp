@@ -1,10 +1,9 @@
 
 #include "base64.h"
-#include <cstdint>
+#include <stdint.h>
 
 namespace mstd {
-
-  using byte_t = std::uint8_t;
+  using byte_t = uint8_t;
   static const char* base64_initilize(void);
 
   static char kDecode64[257] = {};

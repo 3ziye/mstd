@@ -20,7 +20,7 @@ struct disk_info
 	std::string disk_mounted;
 };
 
-namespace stdxx
+namespace mstd
 {
 // 从操作系统启动所经过（elapsed）的毫秒数
 uint64_t get_tick_count();
@@ -44,10 +44,11 @@ std::string shell_cmd(const std::string &cmd);
 //获取进程全路径
 bool get_process_path(std::string& filename);
 bool get_process_path(std::wstring& filename);
+
 template<typename Tchar>
 std::basic_string<Tchar> get_process_path() {
     std::basic_string<Tchar> str;
-    get_process_filename(str);
+	get_process_path(str);
     return str;
 }
 
@@ -60,7 +61,7 @@ template<typename Tchar>
 std::basic_string<Tchar> get_program_dir()
 {
     std::basic_string<Tchar> str;
-    get_program_path(str);
+	get_program_dir(str);
     return str;
 }
 

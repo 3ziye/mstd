@@ -39,48 +39,22 @@
 
 namespace mstd
 {
+#ifdef MSTD_WINDOWS
 	// WBCS to MBCS
 	std::string to_string(const std::wstring& wstring, const std::locale& locale = std::locale{ "" });
-
 	// MBCS to WBCS
 	std::wstring to_wstring(const std::string& string, const std::locale& locale = std::locale{ "" });
-
-	// UTF-8 to UTF-16
-	std::u16string to_u16string(const std::string& u8string);
-
-	// UTF-8 to UTF-32
-	std::u32string to_u32string(const std::string& u8string);
-
-	// UTF-16 to UTF-8
-	std::string to_u8string(const std::u16string& u16string);
-
-	// UTF-16 to UTF-32
-	std::u32string to_u32string(const std::u16string& u16string);
-
-	// UTF-32 to UTF-8
-	std::string to_u8string(const std::u32string& u32string);
-
-	// UTF-32 to UTF-16
-	std::u16string to_u16string(const std::u32string& u32string);
-
 	// string to UTF-8
 	std::string to_u8string(const std::string &string, const std::locale& locale = std::locale{ "" });
-
+#endif
 	// wstring to UTF-8
 	std::string to_u8string(const std::wstring &wstring, const std::locale& locale = std::locale{ "" });
-
+#ifdef MSTD_WINDOWS
 	// UTF-8 to string
     std::string u8_to_string(const std::string &u8string);
-
+#endif
     // UTF-8 to wstring
     std::wstring u8_to_wstring(const std::string &u8string);
-
-	//UCS
-	std::u16string to_ucs2(const std::string &u8string);
-
-	std::u32string to_ucs4(const std::string &u8string);
-
-	std::u32string to_ucs4(const std::u16string &u16string);
 
 }
 

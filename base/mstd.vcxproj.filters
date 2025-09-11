@@ -44,6 +44,30 @@
     <ClCompile Include="..\mstd\path_string.cpp">
       <Filter>source\mstd</Filter>
     </ClCompile>
+    <ClCompile Include="..\mstd\md5.cpp">
+      <Filter>source\mstd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mstd\md5util.cpp">
+      <Filter>source\mstd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mstd\datetime.cpp">
+      <Filter>source\mstd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mstd\file.cpp">
+      <Filter>source\mstd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mstd\fileutils.cpp">
+      <Filter>source\mstd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mstd\log.cpp">
+      <Filter>source\mstd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mstd\threadmgrbase.cpp">
+      <Filter>source\mstd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mstd\threadalive.cpp">
+      <Filter>source\mstd</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\mstd\platform.h">
@@ -71,6 +95,36 @@
       <Filter>source\mstd</Filter>
     </ClInclude>
     <ClInclude Include="..\mstd\path_string.h">
+      <Filter>source\mstd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mstd\md5.h">
+      <Filter>source\mstd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mstd\md5util.h">
+      <Filter>source\mstd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mstd\datetime.h">
+      <Filter>source\mstd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mstd\file.h">
+      <Filter>source\mstd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mstd\fileutils.h">
+      <Filter>source\mstd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mstd\log.h">
+      <Filter>source\mstd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mstd\threadalive.h">
+      <Filter>source\mstd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mstd\threadmgr.h">
+      <Filter>source\mstd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mstd\threadmgrbase.h">
+      <Filter>source\mstd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mstd\singleton.h">
       <Filter>source\mstd</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,6 @@
 ﻿
-#ifndef STDXX_PATH_STRING_H_
-#define STDXX_PATH_STRING_H_
+#ifndef MSTD_PATH_STRING_H_
+#define MSTD_PATH_STRING_H_
 
 #include <string>
 

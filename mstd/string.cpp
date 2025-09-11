@@ -11,6 +11,7 @@
 #pragma warning(disable: 4996)
 #endif
 
+#include "platform.h"
 #include <vector>
 #include <string>
 #include <stdarg.h>
@@ -28,13 +29,8 @@
 # pragma comment(lib, "shlwapi.lib")
 #endif
 
-#ifdef MSTD_LINUX
-#define _countof(arr) (sizeof(arr) / sizeof(arr[0]))
-#endif
-
 namespace mstd {
-	std::string format(const char *fmt, ...)
-	{
+	std::string format(const char *fmt, ...) {
 		char msg[4096] = { 0 };
 		va_list args;
 		va_start(args, fmt);
@@ -44,8 +40,7 @@ namespace mstd {
 		return std::move(std::string(msg));
 	}
 
-	std::wstring format(const wchar_t *fmt, ...)
-	{
+	std::wstring format(const wchar_t *fmt, ...) {
 		wchar_t msg[4096] = { 0 };
 		va_list args;
 		va_start(args, fmt);
