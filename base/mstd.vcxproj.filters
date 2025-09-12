@@ -127,5 +127,8 @@
     <ClInclude Include="..\mstd\singleton.h">
       <Filter>source\mstd</Filter>
     </ClInclude>
+    <ClInclude Include="..\mstd\threadpool.h">
+      <Filter>source\mstd</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -109,7 +109,7 @@ namespace mstd {
 
         ThreadMgr(const char *name):
             ThreadMgrBase(name),
-		    m_thread_id_(0), timer_out_(60 * 1000),
+		    thread_id_(0), timer_out_(60 * 1000),
             idle_timeout_(20), high_water_mark_(512),
             status_(kStatusConstruct),
             alive_tick_count_(mstd::get_tick_count())
@@ -127,25 +127,23 @@ namespace mstd {
         bool Create(const uint32_t time_out = 60 *1000) {
 		    timer_out_ = time_out;
             status_ = kStatusCreating;
-            m_thread_ = std::thread(std::bind(&ThreadMgr<T>::threadRoutine, this));
-
+            thread_ = std::thread(std::bind(&ThreadMgr<T>::threadRoutine, this));
             //获取线程id
             std::stringstream ss;
-            std::thread::id id = m_thread_.get_id();
-            ss << id;
-            m_thread_id_ = atoi(ss.str().c_str());
+            ss << thread_.get_id();
+            thread_id_ = atoi(ss.str().c_str());
 
     #ifdef MSTD_WINDOWS
-            LOGFMTI("Thread Create Mgr=%s, this=0x%p, ThreadId=0x%04x. AliveTick=%I64d.", Name().c_str(), this, m_thread_id_, alive_tick_count_);
+            LOGFMTI("Thread Create Mgr=%s, this=0x%p, ThreadId=0x%04x. AliveTick=%I64d.", Name().c_str(), this, thread_id_, alive_tick_count_);
     #else
-            LOGFMTI("Thread Create Mgr=%s, this=0x%p, ThreadId=0x%04x. AliveTick=%lld.", Name().c_str(), this, m_thread_id_, alive_tick_count_);
+            LOGFMTI("Thread Create Mgr=%s, this=0x%p, ThreadId=0x%04x. AliveTick=%lld.", Name().c_str(), this, thread_id_, alive_tick_count_);
     #endif
             while (status_ == kStatusCreating || status_ == kStatusInit) {
                 mstd::sleep(10);
 		    }
 
             if (status_ == kStatusInitFailed) {
-			    m_thread_.join();
+			    thread_.join();
 			    return false;
             }
 
@@ -162,9 +160,9 @@ namespace mstd {
         void Destroy()
         {
     #ifdef MSTD_WINDOWS
-		    LOGFMTI("Thread Destroy Mgr=%s, this=0x%p, ThreadId=0x%04x. AliveTick=%I64d.", Name().c_str(), this, m_thread_id_, alive_tick_count_);
+		    LOGFMTI("Thread Destroy Mgr=%s, this=0x%p, ThreadId=0x%04x. AliveTick=%I64d.", Name().c_str(), this, thread_id_, alive_tick_count_);
     #else
-            LOGFMTI("Thread Destroy Mgr=%s, this=0x%p, ThreadId=0x%04x. AliveTick=%lld.", Name().c_str(), this, m_thread_id_, alive_tick_count_);
+            LOGFMTI("Thread Destroy Mgr=%s, this=0x%p, ThreadId=0x%04x. AliveTick=%lld.", Name().c_str(), this, thread_id_, alive_tick_count_);
     #endif
             UnregisterAlive();
 
@@ -173,7 +171,7 @@ namespace mstd {
 			    std::unique_lock<std::mutex> lock(mutex_destroy_);
                 if (status_ == kStatusRunning) {
                     status_ = kStatusDestroying;
-				    m_thread_.join();
+				    thread_.join();
                 }
 
             } while(0);
@@ -215,8 +213,7 @@ namespace mstd {
         }
 
         std::string getContext() {
-            std::string context = mstd::format("tid=0x%04x,name=%s,func=%s.", 
-                m_thread_id_, Name().c_str(), exec_func_name_);
+            std::string context = mstd::format("tid=0x%04x,name=%s,func=%s.", thread_id_, Name().c_str(), exec_func_name_);
             return context;
         }
 
@@ -245,8 +242,7 @@ namespace mstd {
             cmd.own_thread_id_ = mstd::get_current_thread_id();
             cmd.cmd_option_ = CommandArgs::SendCommand;
 
-            if (cmd.own_thread_id_ == m_thread_id_)
-            {
+            if (cmd.own_thread_id_ == thread_id_) {
                 T *pThis = (T*)this;
                 uint64_t nBeginTime = mstd::get_tick_count();
                 result = (*cmd.thread_func_)(*pThis);
@@ -320,7 +316,7 @@ namespace mstd {
             cmd_list_.push_back(cmd);
             if ((uint32_t)cmd_list_.size() > high_water_mark_) {
                 LOGFMTW("Mgr[%04x %s] PostCommand MoreCmdCount=%d,Cmd[%s],ExecCmd[%s].",
-                    m_thread_id_, Name().c_str(), (uint32_t)cmd_list_.size(), desc, exec_func_name_);
+                    thread_id_, Name().c_str(), (uint32_t)cmd_list_.size(), desc, exec_func_name_);
             }
 
 		    mutex_async_.unlock();
@@ -495,10 +491,10 @@ namespace mstd {
 
     private:
         uint32_t                                    timer_out_;  //是否注册监控 
-	    std::atomic<Status>                         status_;			//ThreadMgr状态
+	    std::atomic<Status>                         status_;	 //ThreadMgr状态
 
-	    std::thread                                 m_thread_;       //
-	    uint32_t                                    m_thread_id_;     //线程id
+	    std::thread                                 thread_;       //
+	    uint32_t                                    thread_id_;    //线程id
 
         mutable std::mutex                          mutex_sync_;
 	    mutable std::condition_variable             sync_condition_;//SendCommand调用需要的同步事件Handle

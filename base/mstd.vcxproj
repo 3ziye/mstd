@@ -182,6 +182,7 @@
     <ClInclude Include="..\mstd\threadalive.h" />
     <ClInclude Include="..\mstd\threadmgr.h" />
     <ClInclude Include="..\mstd\threadmgrbase.h" />
+    <ClInclude Include="..\mstd\threadpool.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
