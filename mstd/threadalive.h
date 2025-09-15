@@ -14,10 +14,10 @@ namespace mstd {
         void Unregister(ThreadMgrBase* mgr);
         bool IsAlive(std::string&) { return false; }
     private:
-        virtual bool OnInit();
-        virtual void OnUninit();
-        virtual void OnIdle();
-        virtual void OnTimer(const uint32_t) {};
+        virtual bool onInit();
+        virtual void onUninit();
+        virtual void onIdle();
+        virtual void onTimer(const uint32_t) {};
 
     private:
         std::mutex mutex_;

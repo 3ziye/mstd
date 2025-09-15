@@ -15,7 +15,7 @@ namespace mstd {
         LOGFMTI("Create Mgr=%s, this=0x%p, MgrCnt=%d.", name, this, mgr_count_ + 1);
         if (!alive_create_) {
             alive_create_ = true;
-            SingletonThreadAlive::instance().Create(false);
+            SingletonThreadAlive::instance().Init();
         }
         ++mgr_count_;
         mutex_.unlock();
@@ -25,7 +25,7 @@ namespace mstd {
         mutex_.lock();
         LOGFMTI("Destroy Mgr=%s, this=0x%p, MgrCnt=%d", mgr_name_.c_str(), this, mgr_count_ - 1);
         if (--mgr_count_ == 1) {
-            SingletonThreadAlive::instance().Destroy();
+            SingletonThreadAlive::instance().Uninit();
             SingletonThreadAlive::release();
         }
         mutex_.unlock();

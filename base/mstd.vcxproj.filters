@@ -68,6 +68,9 @@
     <ClCompile Include="..\mstd\threadalive.cpp">
       <Filter>source\mstd</Filter>
     </ClCompile>
+    <ClCompile Include="ProcessMgr.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\mstd\platform.h">
@@ -129,6 +132,9 @@
     </ClInclude>
     <ClInclude Include="..\mstd\threadpool.h">
       <Filter>source\mstd</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcessMgr.h">
+      <Filter>source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

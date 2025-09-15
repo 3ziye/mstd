@@ -13,16 +13,16 @@ namespace mstd {
     ThreadAlive::~ThreadAlive() {
     }
 
-    bool ThreadAlive::OnInit() {
+    bool ThreadAlive::onInit() {
         LOGFMTI("ThreadAlive Init");
         return true;
     }
 
-    void ThreadAlive::OnUninit() {
+    void ThreadAlive::onUninit() {
         LOGFMTI("ThreadAlive Uninit");
     }
 
-    void ThreadAlive::OnIdle() {
+    void ThreadAlive::onIdle() {
         uint64_t dwTick = mstd::get_tick_count();
         if (dwTick - last_report_tick_ > 1000) {
             last_report_tick_ = mstd::get_tick_count();

@@ -161,6 +161,7 @@
     <ClCompile Include="..\mstd\threadalive.cpp" />
     <ClCompile Include="..\mstd\threadmgrbase.cpp" />
     <ClCompile Include="base.cpp" />
+    <ClCompile Include="ProcessMgr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\mstd\base64.h" />
@@ -183,6 +184,7 @@
     <ClInclude Include="..\mstd\threadmgr.h" />
     <ClInclude Include="..\mstd\threadmgrbase.h" />
     <ClInclude Include="..\mstd\threadpool.h" />
+    <ClInclude Include="ProcessMgr.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
