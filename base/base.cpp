@@ -37,6 +37,8 @@ int main() {
 	mgr.RegisterTimer(1, 200);
 
 	int resutl = mgr.Process1(1, 2);
+	LOGFMTI("result1=%d", resutl);
+	mgr.Process2(2);
 
 	mstd::sleep(10 * 1000);
 	mgr.Uninit();

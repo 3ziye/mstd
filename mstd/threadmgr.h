@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <utility>
 #include "string.h"
 #include "platform.h"
 #include "threadmgrbase.h"
@@ -166,12 +167,15 @@ namespace mstd {
 
      protected:
         template<class F, class... Args>
-        auto postFunc(F&& f, Args&&... args) -> std::future<typename std::invoke_result<F, Args...>::type> {
+        auto postFunc(F&& f, Args&&... args) -> std::pair<std::future<typename std::invoke_result<F, Args...>::type>, bool> {
             using return_type = typename std::invoke_result<F, Args...>::type;
-
 			auto func = std::make_shared< std::packaged_task<return_type()> >(
 				std::bind(std::forward<F>(f), std::forward<Args>(args)...));
             std::future<return_type> res = func->get_future();
+
+            if (status_ != kStatusRunning) {
+                return {std::move(res), false};
+            }
 
             std::shared_ptr<Command> cmd = std::make_shared<Command>();
             cmd->func_ = [func]() {
@@ -186,7 +190,7 @@ namespace mstd {
                 condition_.notify_one();
 			}
 
-            return res;
+            return {std::move(res), true };
         }
 
     private:

@@ -8,7 +8,7 @@ public:
 	~ProcessMgr();
 
 	int Process1(int a, int b);
-	int Process2(int a, int b);
+	void Process2(int a);
 private:
 	virtual bool onInit();
 	virtual void onUninit();
