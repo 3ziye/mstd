@@ -22,7 +22,7 @@ int ProcessMgr::Process1(int a, int b) {
 }
 
 void ProcessMgr::Process2(int a) {
-	auto add = [this](int a) {
+	auto add = [](int a) {
 		mstd::sleep(3000);
 		LOGFMTI("a=%d", a);
 	};

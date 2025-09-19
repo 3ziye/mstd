@@ -1,12 +1,16 @@
 
 #include "hex.h"
-
+#include "platform.h"
 namespace mstd {
     std::string to_hex(const char* buff, const int buff_len) {
         char *str = (char*)malloc(buff_len * sizeof(char) * 2 + 1);
         int n = 0;
         for (int i = 0; i < buff_len; i++) {
+#ifdef MSTD_WINDOWS
+            n += sprintf_s(str + n, 2, "%02x", buff[i]);
+#else
             n += sprintf(str + n, "%02x", buff[i]);
+#endif
         }
 
         std::string ret(str, n);

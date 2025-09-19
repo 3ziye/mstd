@@ -1,9 +1,6 @@
 #ifndef __HEX_H_
 #define __HEX_H_
 
-#ifdef MSTD_WINDOWS
-#define _CRT_SECURE_NO_WARNINGS
-#endif // MSTD_WINDOWS
 
 #include <string>
 namespace mstd {

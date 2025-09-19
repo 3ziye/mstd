@@ -8,6 +8,8 @@
 #include "mstd/fileutils.h"
 #include "mstd/threadpool.h"
 #include "mstd/system.h"
+#include "mstd/ipstring.h"
+#include "mstd/crc32.h"
 #include "ProcessMgr.h"
 
 void initLog() {
@@ -24,10 +26,13 @@ void test_thread_pool();
 
 int main() {
     ////crc要调整
-    //std::string a = "hello world";
-    //uint32_t crc1 = mstd::crc32::value(a.data(), a.size());
-    //uint32_t crc2 = mstd::ccbl::crc32_sse((const uint8_t*)a.data(), a.size());
+    std::string a = "hello world";
+    uint32_t crc1 = mstd::crc32::value(a.data(), a.size());
+    uint32_t crc2 = mstd::ccbl::crc32_sse((const uint8_t*)a.data(), a.size());
 	initLog();
+
+	uint32_t ip = mstd::ip_from_string("192.168.31.2");
+	std::string ips = mstd::ip_to_string(ip);
 
 	std::function<void()> f = std::bind(&test_thread_pool);
 	std::string name = f.target_type().name();

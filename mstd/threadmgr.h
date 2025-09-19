@@ -146,8 +146,7 @@ namespace mstd {
 
         virtual bool IsAlive(std::string &process_info) {
             uint64_t nTick = mstd::get_tick_count();
-            if (nTick - alive_tick_count_ > timer_out_)
-            {
+            if (nTick - alive_tick_count_ > timer_out_) {
     #ifdef MSTD_WINDOWS
                 LOGFMTE("IsVaild Tick=%I64d, Alive=%I64d", nTick, alive_tick_count_);
     #else
@@ -226,7 +225,6 @@ namespace mstd {
 
 				commandLoop();
 				onTimerTrigger();
-
 				mstd_strcpy(exec_func_name_, "onIdle");
 				onIdle();
 				alive_tick_count_ = mstd::get_tick_count();
@@ -238,17 +236,17 @@ namespace mstd {
             if (timer_trigger_.empty()) return;
 
             uint64_t tick_time = mstd::get_tick_count();
-            for (auto &trigger : timer_trigger_) {
-                if (tick_time - trigger.second.tick_time_ > trigger.second.period_ && !trigger.second.is_pending_) {
-                    trigger.second.tick_time_ = tick_time;
-                    trigger.second.is_pending_ = true;
-                    postFunc(&ThreadMgr<T>::setTimerTrigger, this, trigger.second.timer_id_);
+            for (auto &[_, trigger] : timer_trigger_) {
+                if (tick_time - trigger.tick_time_ > trigger.period_ && !trigger.is_pending_) {
+                    trigger.tick_time_ = tick_time;
+                    trigger.is_pending_ = true;
+                    postFunc(&ThreadMgr<T>::setTimerTrigger, this, trigger.timer_id_);
                 }
             }
         }
 
         bool setTimerTrigger(const uint32_t timer_id_) {
-            mstd_sprintf(exec_func_name_, "OnTimer TimerId=%d", timer_id_);
+            mstd_sprintf(exec_func_name_, "onTimer tmId=%d", timer_id_);
             onTimer(timer_id_);
 
 			std::lock_guard<std::mutex> lock(mutex_timer_);
@@ -264,12 +262,11 @@ namespace mstd {
 	    */
         void commandLoop() {
             bool exec = false;
-            do 
-            {
+            do {
 				std::unique_lock<std::mutex> lock(mutex_);
                 exec = condition_.wait_for(lock, idle_timeout_, [this] {
-					return !cmd_list_.empty(); // 检查条件是否满足
-					});
+					       return !cmd_list_.empty(); // 检查条件是否满足
+					   });
             } while (0);
 
             if (!exec) return;

@@ -650,20 +650,15 @@ namespace mstd
 				if (entry.is_directory()) {
 					dirs.push_back(path_str);
 					enum_directory(path_str.c_str(), dirs, files, level - 1);
-				}
-				else if (entry.is_regular_file()) {
+				} else if (entry.is_regular_file()) {
 					files.push_back(path_str);
 				}
 				// 可以根据需要添加对其他类型文件（如符号链接）的处理
 			}
-
-			return true;
-		}
-		catch (const fs::filesystem_error& e) {
+		} catch (const fs::filesystem_error& e) {
 			// 处理文件系统错误（如权限不足）
 			return false;
-		}
-		catch (...) {
+		} catch (...) {
 			// 处理其他未知错误
 			return false;
 		}
