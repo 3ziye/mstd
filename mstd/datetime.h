@@ -60,6 +60,6 @@ namespace mstd {
 	private:
 		value	value_;
 	};//end class time
-}//end namespace stdxx
+}//end namespace mstd
 
 #endif //__DATETIME_H_

@@ -17,5 +17,5 @@ namespace mstd {
 std::string ip_to_string(const uint32_t ip);
 uint32_t ip_from_string(const std::string &ip);
 
-} // stdxx
+} // mstd
 #endif // #ifndef __IP_STRING_H_

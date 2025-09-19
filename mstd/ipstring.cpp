@@ -29,4 +29,4 @@ uint32_t ip_from_string(const std::string &ip) {
 	return ipv4;
 }
 
-} // stdxx
+} // mstd

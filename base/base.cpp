@@ -10,6 +10,7 @@
 #include "mstd/system.h"
 #include "mstd/ipstring.h"
 #include "mstd/crc32.h"
+#include "mstd/serialize.h"
 #include "ProcessMgr.h"
 
 void initLog() {
@@ -21,10 +22,28 @@ void initLog() {
 	mstd::log::set_reserve_days(5);
 }
 
-
 void test_thread_pool();
 
+struct Body {
+	uint32_t id;
+	std::string Name;
+	std::vector<std::string> Friends;
+	mypack_serialize(id, Name, Friends);
+};
+
 int main() {
+	Body b;
+	b.Name = "dc";
+	b.id = 1;
+	b.Friends.push_back("yc");
+	b.Friends.push_back("wq");
+
+	ByteBuffer buff;
+	b.serialize(buff);
+
+	Body c;
+	c.deserialize(buff);
+
     ////crc要调整
     std::string a = "hello world";
     uint32_t crc1 = mstd::crc32::value(a.data(), a.size());

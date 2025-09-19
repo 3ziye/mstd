@@ -278,4 +278,4 @@ namespace mstd
 			return value_;
 		}
 	//end class time
-}//end namespace stdxx
+}//end namespace mstd

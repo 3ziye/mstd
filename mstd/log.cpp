@@ -438,4 +438,4 @@ std::string log_file_path() {
 }
 
 }  // namespace log
-}  // namespace stdxx
+}  // namespace mstd

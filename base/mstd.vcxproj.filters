@@ -71,6 +71,9 @@
     <ClCompile Include="ProcessMgr.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="..\mstd\platform.cpp">
+      <Filter>source\mstd</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\mstd\platform.h">
@@ -135,6 +138,12 @@
     </ClInclude>
     <ClInclude Include="ProcessMgr.h">
       <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mstd\bytebuffer.h">
+      <Filter>source\mstd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mstd\serialize.h">
+      <Filter>source\mstd</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

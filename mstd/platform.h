@@ -7,6 +7,9 @@ namespace mstd {
 	struct is_x64 {
 		static constexpr bool value = sizeof(T*) == 8;
 	};
+	
+	bool is_little_endian();
+	bool is_big_endian();
 };
 
 #ifdef MSTD_WINDOWS

@@ -91,4 +91,4 @@ std::wstring get_local_sys_path(const std::wstring& path);
 
 }  // namespace stdxx
 
-#endif  // STDXX_PATH_STRING_H_
+#endif
