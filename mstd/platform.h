@@ -1,6 +1,7 @@
 ﻿#ifndef __PLATFORM_H_
 #define __PLATFORM_H_
 #include <stdio.h>
+#include <stdint.h>
 //MSTD_WINDOWS MSTD_LINUX MSTD_UNIX MSTD_APPLE
 namespace mstd {
 	template <typename T = void>
@@ -10,6 +11,35 @@ namespace mstd {
 	
 	bool is_little_endian();
 	bool is_big_endian();
+
+	uint16_t htons(uint16_t host_value);
+	uint32_t htonl(uint32_t host_value);
+	uint64_t htonll(uint64_t host_value);
+	uint16_t ntohs(uint16_t net_value);
+	uint32_t ntohl(uint32_t net_value);
+	uint64_t ntohll(uint64_t net_value);
+
+	template<typename T>
+	constexpr T hton(T value) {
+		//static_assert(std::is_integral_v<T>, "Only integral types are supported");
+		if constexpr (sizeof(T) == 1) {
+			return value; // 单字节不需要转换
+		} else if constexpr (sizeof(T) == 2) {
+			return htons(static_cast<uint16_t>(value));
+		} else if constexpr (sizeof(T) == 4) {
+			return htonl(static_cast<uint32_t>(value));
+		} else if constexpr (sizeof(T) == 8) {
+			return htonll(static_cast<uint64_t>(value));
+		}
+
+		static_assert(sizeof(T) <= 8, "Unsupported type size");
+		return value;
+	}
+
+	template<typename T>
+	constexpr T ntoh(T value) {
+		return hton(value);
+	}
 };
 
 #ifdef MSTD_WINDOWS

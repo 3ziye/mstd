@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstring>
 #include <cassert>
+#include "platform.h"
 class ByteBuffer
 {
 public:
@@ -48,7 +49,7 @@ public:
         }
 
         storage_size_ = size;
-		WriteBytes(size);
+		writeBytes(size);
 	}
 
     ~ByteBuffer() {
@@ -92,20 +93,57 @@ public:
 		return *this;
 	}
 
+	bool Read(void *buf, uint32_t size) {
+		if (Size() < size) {
+			return false;
+		}
+
+        memcpy(buf, readBegin(), size);
+		readBytes(size);
+		return true;
+	}
+
+    template<typename T>
+    bool Read(T &t) {
+        if (Size() < sizeof(T)) {
+            return false;
+        }
+
+        t = *(T*)readBegin();
+        readBytes(sizeof(T));
+        t = mstd::ntoh(t);
+        return true;
+    }
+
+	template<typename T>
+	void Write(const T& t) {
+        T tmp = mstd::hton(t);
+        Write((char*)&tmp, sizeof(T));
+	}
+
+	void Write(const char* data, std::size_t size) {
+		if (size > 0 && inner_) {
+			estimateSize(size);
+			memcpy(writeBegin(), data, size);
+			writeBytes(size);
+		}
+	}
+
     void ResetRead() { rpos_ = 0; }
 	void Reset() { wpos_ = 0; rpos_ = 0; }
-
-    char* Data() { return storage_; }
-    char* ReadBegin() { return storage_ + rpos_; }
-    char* WriteBegin() { return Data() + wpos_; }
-
-	void ReadBytes(size_t bytes) { rpos_ += bytes; }
-	void WriteBytes(size_t bytes) { wpos_ += bytes; }
-
     size_t Size() const { return wpos_ - rpos_; }
-    size_t ValidSize() const { return storage_size_ - wpos_; }
-    size_t Capacity() const { return storage_size_; }
-    void AddCapacity(size_t bytes) { 
+private:
+    char* data() { return storage_; }
+    char* readBegin() { return storage_ + rpos_; }
+    char* writeBegin() { return data() + wpos_; }
+
+	void readBytes(size_t bytes) { rpos_ += bytes; }
+	void writeBytes(size_t bytes) { wpos_ += bytes; }
+
+    
+    size_t validSize() const { return storage_size_ - wpos_; }
+    size_t capacity() const { return storage_size_; }
+    void addCapacity(size_t bytes) { 
         if (inner_) {
             storage_ = (char*)realloc(storage_, storage_size_ + bytes);
             storage_size_ += bytes;
@@ -116,13 +154,13 @@ public:
 	void Normalize() {
 		if (rpos_ > 0 && inner_) {
 			if (rpos_ != wpos_) {
-				memmove(Data(), ReadBegin(), Size());
+				memmove(data(), readBegin(), Size());
 			}
 			wpos_ -= rpos_;
 			rpos_ = 0;
 
             //如果可写容量超过初始化的5倍，进行缩容量
-            if ((ValidSize() > init_size_ * 5) && (Size() < init_size_)) {
+            if ((validSize() > init_size_ * 5) && (Size() < init_size_)) {
                 char *tmp = (char*)malloc(init_size_);
                 if (wpos_)
                     memcpy(tmp, storage_, wpos_);
@@ -133,33 +171,15 @@ public:
 		}
 	}
 
-
-	void EstimateSize(size_t size) {
-		if (ValidSize() < size && inner_) {
+	void estimateSize(size_t size) {
+		if (validSize() < size && inner_) {
             storage_size_ = (storage_size_ + size) * 3 / 2;
             storage_ = (char*)realloc(storage_, storage_size_);
             assert(storage_);
 		}
 	}
 
-	void Write(const char* data, std::size_t size) {
-		if (size > 0 && inner_) {
-			EstimateSize(size);
-			memcpy(WriteBegin(), data, size);
-			WriteBytes(size);
-		}
-	}
-
-    void Write(const char* head, std::size_t head_size ,const char* data, std::size_t size) {
-        if (head_size + size > 0 && inner_) {
-            EstimateSize(head_size + size);
-            memcpy(WriteBegin(), head, head_size);
-            memcpy((char*)WriteBegin() + head_size, data, size);
-            WriteBytes(head_size + size);
-        }
-    }
-
-	void Swap(ByteBuffer& rhs) {
+	void swap(ByteBuffer& rhs) {
         if (inner_ && storage_ != nullptr) {
             free(storage_);
         }
