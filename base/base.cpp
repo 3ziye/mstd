@@ -27,16 +27,16 @@ void test_thread_pool();
 struct Body {
 	uint32_t id;
 	std::string Name;
-	std::vector<std::string> Friends;
-	mypack_serialize(id, Name, Friends);
+	std::list<std::string> Friends;
+	mstd_serialize(id, Name, Friends);
 };
 
 int main() {
 	Body b;
-	b.Name = "dc";
+	b.Name = "dcsdfaffffffffff";
 	b.id = 1;
-	b.Friends.push_back("yc");
-	b.Friends.push_back("wq");
+	b.Friends.push_back("ywefwc");
+	b.Friends.push_back("wwfeeeeeq");
 
 	ByteBuffer buff;
 	b.serialize(buff);

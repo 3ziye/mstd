@@ -224,7 +224,7 @@ namespace mstd {
 	};
 };
 
-#define mypack_serialize(...) \
+#define mstd_serialize(...) \
     virtual void serialize(ByteBuffer& buff){\
 		mstd::serialize(buff, ##__VA_ARGS__);\
 	}\
