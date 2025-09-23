@@ -10,7 +10,7 @@
 
 namespace mstd
 {
-    namespace ccbl {
+
 #if defined(_MSC_VER)
 #define CRC_AINLINE static __forceinline
 #define CRC_ALIGN(n) __declspec(align(n))
@@ -158,9 +158,6 @@ uint32_t crc32_sse(const uint8_t* buf, size_t len, uint32_t crc0)
         crc0 = crc_u8(crc0, *buf++);
     }
     return ~crc0;
-
-}
-
 };
 
 #endif

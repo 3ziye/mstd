@@ -103,8 +103,7 @@ namespace mstd {
         /*
         必须在另外的线程空间进行调用，返回后该ThreadMgr的线程也将结束
         */
-        void Uninit()
-        {
+        void Uninit() {
     #ifdef MSTD_WINDOWS
 		    LOGFMTI("Thread Uninit Mgr=%s, this=0x%p, ThreadId=0x%04x. AliveTick=%I64d.", Name().c_str(), this, thread_id_, alive_tick_count_);
     #else

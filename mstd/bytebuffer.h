@@ -132,15 +132,15 @@ public:
     void ResetRead() { rpos_ = 0; }
 	void Reset() { wpos_ = 0; rpos_ = 0; }
     size_t Size() const { return wpos_ - rpos_; }
+    char* Data() { return readBegin(); }
+
 private:
-    char* data() { return storage_; }
     char* readBegin() { return storage_ + rpos_; }
-    char* writeBegin() { return data() + wpos_; }
+    char* writeBegin() { return storage_ + wpos_; }
 
 	void readBytes(size_t bytes) { rpos_ += bytes; }
 	void writeBytes(size_t bytes) { wpos_ += bytes; }
 
-    
     size_t validSize() const { return storage_size_ - wpos_; }
     size_t capacity() const { return storage_size_; }
     void addCapacity(size_t bytes) { 
@@ -151,10 +151,10 @@ private:
         }
     }
 
-	void Normalize() {
+	void normalize() {
 		if (rpos_ > 0 && inner_) {
 			if (rpos_ != wpos_) {
-				memmove(data(), readBegin(), Size());
+				memmove(storage_, readBegin(), Size());
 			}
 			wpos_ -= rpos_;
 			rpos_ = 0;

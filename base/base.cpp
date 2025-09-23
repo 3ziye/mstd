@@ -41,13 +41,16 @@ int main() {
 	ByteBuffer buff;
 	b.serialize(buff);
 
+	std::string buf;
+	buf.assign(buff.Data(), buff.Size());
+
 	Body c;
 	c.deserialize(buff);
 
     ////crc要调整
     std::string a = "hello world";
-    uint32_t crc1 = mstd::crc32::value(a.data(), a.size());
-    uint32_t crc2 = mstd::ccbl::crc32_sse((const uint8_t*)a.data(), a.size());
+    uint32_t crc1 = mstd::crc32((const uint8_t*)a.data(), a.size());
+    uint32_t crc2 = mstd::crc32_sse((const uint8_t*)a.data(), a.size());
 	initLog();
 
 	uint32_t ip = mstd::ip_from_string("192.168.31.2");
