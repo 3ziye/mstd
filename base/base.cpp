@@ -11,6 +11,7 @@
 #include "mstd/ipstring.h"
 #include "mstd/crc32.h"
 #include "mstd/serialize.h"
+#include "mstd/datetime.h"
 #include "ProcessMgr.h"
 
 void initLog() {
@@ -23,6 +24,7 @@ void initLog() {
 }
 
 void test_thread_pool();
+void testdatatime();
 
 struct Body {
 	uint32_t id;
@@ -32,6 +34,7 @@ struct Body {
 };
 
 int main() {
+	testdatatime();
 	Body b;
 	b.Name = "dcsdfaffffffffff";
 	b.id = 1;
@@ -152,3 +155,23 @@ private:
 		}
 	}
 };
+
+void testdatatime() {
+	mstd::datetime now = mstd::datetime::now();
+	std::cout << "Current time: " << now.to_string() << std::endl;
+	std::cout << "Day of week: " << now.day_of_week() << std::endl;
+	// 测试加减运算
+	mstd::datetime later = now + mstd::datetime::duration::hours(1); // 加1小时
+	std::cout << "1 hour later: " << later.to_string() << std::endl;
+
+	mstd::datetime earlier = now - mstd::datetime::duration::hours(2); // 减2小时
+	std::cout << "2 hours earlier: " << earlier.to_string() << std::endl;
+
+	// 测试比较运算符
+	mstd::datetime dt1(2024, 1, 1, 12, 0, 0);
+	mstd::datetime dt2(2024, 1, 1, 12, 0, 1);
+
+	std::cout << "dt1 == dt2: " << (dt1 == dt2) << std::endl;
+	std::cout << "dt1 < dt2: " << (dt1 < dt2) << std::endl;
+	std::cout << "dt1 > dt2: " << (dt1 > dt2) << std::endl;
+}

@@ -1,281 +1,173 @@
 ﻿
 #include "datetime.h"
 #include "platform.h"
+#include <chrono>
+#include <ctime>
+#include <iostream>
+#include <stdexcept>
 
-#ifdef MSTD_WINDOWS
-#include <windows.h>
-#endif
-#include <cassert>
-
-namespace {
-	std::tm localtime()
-	{
-#ifdef MSTD_WINDOWS
-		time_t t;
-		::time(&t);
-		std::tm tm;
-		if(localtime_s(&tm, &t) != 0)
-			assert(false);
-
-		return tm;
-#else
-		time_t t = std::time(nullptr);
-		struct tm * tm_addr = std::localtime(&t);
-		assert(tm_addr);
-		
-		return *tm_addr;
-#endif
-	}
-	
-	::mstd::date::value to_dateval(const std::tm& t)
-	{
-		return {static_cast<unsigned>(t.tm_year + 1900), static_cast<unsigned>(t.tm_mon + 1), static_cast<unsigned>(t.tm_mday)};
-	}
-
-	::mstd::time::value to_timeval(const std::tm& t)
-	{
-		return {static_cast<unsigned>(t.tm_hour), static_cast<unsigned>(t.tm_min), static_cast<unsigned>(t.tm_sec)};
-	}
-
-} // namespace anonymous
 
 namespace mstd
 {
-	//class date		
-		void date::set(const std::tm& t)
-		{
-			value_ = to_dateval(t);
+	// 验证日期时间有效性
+	void datetime::validate() const {
+		if (month_ < 1 || month_ > 12) {
+			throw std::invalid_argument("Invalid month");
 		}
-
-		date::date()
-			: value_(to_dateval(localtime()))
-		{
+		if (day_ < 1 || day_ > days_in_month(year_, month_)) {
+			throw std::invalid_argument("Invalid day");
 		}
-
-		date::date(const std::tm& t)
-			: value_(to_dateval(t))
-		{
+		if (hour_ < 0 || hour_ > 23) {
+			throw std::invalid_argument("Invalid hour");
 		}
-
-		date::date(int year, int month, int day)
-			: value_({static_cast<unsigned>(year), static_cast<unsigned>(month), static_cast<unsigned>(day)})
-		{
-			if(1601 <= year && year < 30827 && 0 < month && month < 13 && day > 0)
-			{
-				if(day <= static_cast<int>(date::month_days(year, month)))
-					return;
-			}
-
-			set(localtime());
+		if (minute_ < 0 || minute_ > 59) {
+			throw std::invalid_argument("Invalid minute");
 		}
-
-		date date::operator - (int off) const
-		{
-			if(off < 0)
-				return _m_add(static_cast<unsigned>(-off));
-			return _m_sub(static_cast<unsigned>(off));
+		if (second_ < 0 || second_ > 59) {
+			throw std::invalid_argument("Invalid second");
 		}
+	}
 
-		date date::operator + (int off) const
-		{
-			if(off < 0)
-				return _m_sub(static_cast<unsigned>(-off));
-			return _m_add(static_cast<unsigned>(off));
+	datetime datetime::now() {
+		auto now = std::chrono::system_clock::now();
+		std::time_t time = std::chrono::system_clock::to_time_t(now);
+#ifdef MSTD_WINDOWS
+		std::tm tm;
+		localtime_s(&tm, &time);
+		return datetime(
+			tm.tm_year + 1900,
+			tm.tm_mon + 1,
+			tm.tm_mday,
+			tm.tm_hour,
+			tm.tm_min,
+			tm.tm_sec
+		);
+#else
+		std::tm* tm = std::localtime(&time);
+		return datetime(
+			tm->tm_year + 1900,
+			tm->tm_mon + 1,
+			tm->tm_mday,
+			tm->tm_hour,
+			tm->tm_min,
+			tm->tm_sec
+		);
+#endif
+	}
+
+	// 返回周几 (0=周日, 1=周一, ..., 6=周六)
+	int datetime::day_of_week() const {
+		// Zeller's congruence algorithm
+		int y = year_;
+		int m = month_;
+		if (m < 3) {
+			m += 12;
+			y -= 1;
 		}
+		int k = y % 100; // year of the century
+		int j = y / 100; // zero-based century
+		int h = (day_ + 13 * (m + 1) / 5 + k + k / 4 + j / 4 + 5 * j) % 7;
+		return (h + 5) % 7; // convert to 0=Sunday, 1=Monday, etc.
+	}
 
-		bool date::operator==(const date& r) const
-		{
-			return (r.value_.year == value_.year && r.value_.month == value_.month && r.value_.day == value_.day);
+	std::time_t datetime::to_time_t() const {
+		std::tm tm = {};
+		tm.tm_year = year_ - 1900;
+		tm.tm_mon = month_ - 1;
+		tm.tm_mday = day_;
+		tm.tm_hour = hour_;
+		tm.tm_min = minute_;
+		tm.tm_sec = second_;
+		return std::mktime(&tm);
+	}
+
+	// 从时间戳创建 DateTime
+	datetime datetime::from_time_t(std::time_t time) {
+#ifdef MSTD_WINDOWS
+		std::tm tm;
+		localtime_s(&tm, &time);
+		return datetime(
+			tm.tm_year + 1900,
+			tm.tm_mon + 1,
+			tm.tm_mday,
+			tm.tm_hour,
+			tm.tm_min,
+			tm.tm_sec
+		);
+#else
+		std::tm* tm = std::localtime(&time);
+		return datetime(
+			tm->tm_year + 1900,
+			tm->tm_mon + 1,
+			tm->tm_mday,
+			tm->tm_hour,
+			tm->tm_min,
+			tm->tm_sec
+		);
+#endif
+	}
+
+	datetime datetime::operator-(duration d) const {
+		std::time_t time = to_time_t();
+		time -= d.get_total_seconds(); // 减去秒数
+		return from_time_t(time);
+	}
+
+	datetime datetime::operator+(duration d) const {
+		std::time_t time = to_time_t();
+		time += d.get_total_seconds(); // 加上秒数
+		return from_time_t(time);
+	}
+
+	bool datetime::operator==(const datetime& other) const {
+		return year_ == other.year_ && month_ == other.month_ && day_ == other.day_ &&
+			hour_ == other.hour_ && minute_ == other.minute_ && second_ == other.second_;
+	}
+
+	bool datetime::operator!=(const datetime& other) const {
+		return !(*this == other);
+	}
+
+	bool datetime::operator<(const datetime& other) const {
+		if (year_ != other.year_) return year_ < other.year_;
+		if (month_ != other.month_) return month_ < other.month_;
+		if (day_ != other.day_) return day_ < other.day_;
+		if (hour_ != other.hour_) return hour_ < other.hour_;
+		if (minute_ != other.minute_) return minute_ < other.minute_;
+		return second_ < other.second_;
+	}
+
+	bool datetime::operator<=(const datetime& other) const {
+		return !(other < *this);
+	}
+
+	bool datetime::operator>(const datetime& other) const {
+		return other < *this;
+	}
+
+	bool datetime::operator>=(const datetime& other) const {
+		return !(*this < other);
+	}
+
+	std::string datetime::to_string() const {
+		char buffer[64];
+		snprintf(buffer, sizeof(buffer), "%04d-%02d-%02d %02d:%02d:%02d",
+			year_, month_, day_, hour_, minute_, second_);
+		return std::string(buffer);
+	}
+
+	// 判断是否为闰年
+	bool datetime::is_leap_year(int year) {
+		return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+	}
+
+	// 获取某年某月的天数
+	int datetime::days_in_month(int year, int month) {
+		static const int days[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+		if (month == 2 && is_leap_year(year)) {
+			return 29;
 		}
+		return days[month - 1];
+	}
 
-		bool date::operator!=(const date& r) const
-		{
-			return ! (this->operator==(r));
-		}
-
-		bool date::operator <(const date & r) const
-		{
-			if(value_.year < r.value_.year)
-			{
-				return true;
-			}
-			else if(value_.year == r.value_.year)
-			{
-				if(value_.month < r.value_.month)
-					return true;
-				else if(value_.month == r.value_.month)
-					return (value_.day < r.value_.day);
-			}
-			return false;
-		}
-
-		bool date::operator>(const date & r) const
-		{
-			if(value_.year > r.value_.year)
-			{
-				return true;
-			}
-			else if(value_.year == r.value_.year)
-			{
-				if(value_.month > r.value_.month)
-					return true;
-				else if(value_.month == r.value_.month)
-					return (value_.day > r.value_.day);
-			}
-			return false;
-		}
-
-		bool date::operator<=(const date& r) const
-		{
-			return !(this->operator>(r));
-		}
-
-		bool date::operator>=(const date& r) const
-		{
-			return !(this->operator<(r));
-		}
-
-		int date::day_of_week() const
-		{
-			return day_of_week(static_cast<int>(value_.year), static_cast<int>(value_.month), static_cast<int>(value_.day));
-		}
-
-		int date::day_of_week(int year, int month, int day)
-		{
-			//w=y+[y/4]+[c/4]-2c+[26(m+1)/10]+d-1;
-			//the Jan and Feb of Every year are treated as the 13th/14th month of last year.
-
-			if(month < 3)
-			{
-				month += 12;
-				--year;
-			}
-
-			int century = year / 100;
-			year = year % 100;
-
-			int w = year + (year / 4) + (century / 4) - (2 * century) + (26 * ( month + 1) / 10) + day - 1;
-
-			if(w >= 0)
-				return (w % 7);
-			return ((1 - (w / 7)) * 7 + w);
-		}
-
-		const date::value & date::read() const
-		{
-			return this->value_;
-		}
-
-		date date::_m_add(unsigned x) const
-		{
-			date d(*this);
-			while(x)
-			{
-				unsigned off = month_days(d.value_.year, d.value_.month) - d.value_.day;
-				if(off < x)
-				{
-					d.value_.day = 1;
-					if(d.value_.month == 12)
-					{
-						d.value_.month = 1;
-						++ d.value_.year;
-					}
-					else
-						++ d.value_.month;
-
-					x -= (off + 1);
-				}
-				else if(off >= x)
-				{
-					d.value_.day += x;
-					break;
-				}
-			}
-			return d;
-		}
-
-		date date::_m_sub(unsigned x) const
-		{
-			date d(*this);
-			while(x)
-			{
-				if(d.value_.day <= x)
-				{
-					if(d.value_.month == 1)
-					{
-						d.value_.month = 12;
-						-- d.value_.year;
-					}
-					else
-						-- d.value_.month;
-
-					d.value_.day = month_days(d.value_.year, d.value_.month);
-
-					x -= d.value_.day;
-				}
-				else
-				{
-					d.value_.day -= x;
-					break;
-				}
-			}
-			return d;
-		}
-
-		unsigned date::day_in_year(unsigned y, unsigned m, unsigned d)
-		{
-			unsigned days = 0;
-			for(unsigned i = 1; i < m; ++i)
-				days += month_days(y, i);
-			return days + d;
-		}
-
-		unsigned date::month_days(unsigned year, unsigned month)
-		{
-			unsigned num[] = {31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-			if(month != 2)
-				return num[month - 1];
-
-			if(((year % 4 == 0) && (year % 100)) || (year % 400 == 0))
-				return 29;
-			return 28;
-		}
-
-		unsigned date::year_days(unsigned year)
-		{
-			if(((year % 4 == 0) && (year % 100)) || (year % 400 == 0))
-				return 366;
-			return 365;
-		}
-	//end class date
-
-	//class time
-		void time::set(const std::tm& t)
-		{
-			value_ = to_timeval(t);
-		}
-
-		time::time()
-			: value_(to_timeval(localtime()))
-		{
-		}
-
-		time::time(const std::tm& t)
-			: value_(to_timeval(t))
-		{
-		}
-
-		time::time(unsigned hour, unsigned minute, unsigned second)
-			: value_({hour, minute, second})
-		{
-			if(hour < 24 && minute < 60 && second < 62)
-				return;
-
-			set(localtime());
-		}
-		const time::value& time::read() const
-		{
-			return value_;
-		}
-	//end class time
 }//end namespace mstd
