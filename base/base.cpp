@@ -26,11 +26,18 @@ void initLog() {
 void test_thread_pool();
 void testdatatime();
 
+struct Hand {
+	uint32_t left;
+	uint32_t right;
+	mstd_serialize(left, right);
+};
+
 struct Body {
 	uint32_t id;
 	std::string Name;
 	std::list<std::string> Friends;
-	mstd_serialize(id, Name, Friends);
+	Hand hand;
+	mstd_serialize(id, Name, Friends, hand);
 };
 
 int main() {
@@ -40,6 +47,8 @@ int main() {
 	b.id = 1;
 	b.Friends.push_back("ywefwc");
 	b.Friends.push_back("wwfeeeeeq");
+	b.hand.left = 1;
+	b.hand.right = 2;
 
 	ByteBuffer buff;
 	b.serialize(buff);

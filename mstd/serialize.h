@@ -12,24 +12,43 @@
 namespace mstd {
 	// 对于有size()方法的类型
 	template <typename T>
-	inline auto t_size(const T& t) -> decltype(t.size(), uint32_t()) {
-		return static_cast<uint32_t>(t.size());
+	inline uint32_t size(const T& t) {
+		return uint32_t(t.size());
 	}
 
-	// 对于内置类型 - 使用重载而不是特化
-	inline uint32_t t_size(bool) { return 1; }
-	inline uint32_t t_size(uint8_t) { return 1; }
-	inline uint32_t t_size(uint16_t) { return 2; }
-	inline uint32_t t_size(uint32_t) { return 4; }
-	inline uint32_t t_size(uint64_t) { return 8; }
-	// 对于std::string - 如果需要特殊处理
-	inline uint32_t t_size(const std::string& t) {
-		return static_cast<uint32_t>(t.size()); // 或者根据实际协议调整
+	template <>
+	inline uint32_t size<bool>(const bool&) {
+		return 1;
+	}
+
+	template <>
+	inline uint32_t size<uint8_t>(const uint8_t&) {
+		return 1;
+	}
+
+	template <>
+	inline uint32_t size<uint16_t>(const uint16_t&) {
+		return 2;
+	}
+
+	template <>
+	inline uint32_t size<uint32_t>(const uint32_t&) {
+		return 4;
+	}
+
+	template <>
+	inline uint32_t size<uint64_t>(const uint64_t&) {
+		return 8;
+	}
+
+	template <>
+	inline uint32_t size<std::string>(const std::string& t) {
+		return uint32_t(4 + t.size());
 	}
 
 	template <typename... Args>
-	inline uint32_t ts_size(const Args&... args) {
-		return (t_size(args) + ...);
+	inline uint32_t t_size(Args&... args) {
+		return (mstd::size(args) + ...);
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -225,13 +244,13 @@ namespace mstd {
 };
 
 #define mstd_serialize(...) \
-    virtual void serialize(ByteBuffer& buff){\
+    virtual void serialize(ByteBuffer& buff) const {\
 		mstd::serialize(buff, ##__VA_ARGS__);\
 	}\
     virtual bool deserialize(ByteBuffer& buff){\
 	    return mstd::deserialize(buff, ##__VA_ARGS__); \
 	}\
-    uint32_t size() {\
-        return mstd::ts_size(__VA_ARGS__);\
+    uint32_t size() const {\
+        return mstd::t_size(__VA_ARGS__);\
     }
 
