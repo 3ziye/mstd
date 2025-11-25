@@ -27,7 +27,7 @@ namespace mstd
 namespace log
 {
 
-const char* get_level_string(Level level) {
+const char* level_string(Level level) {
     switch (level)
     {
     case Panic:
@@ -63,7 +63,6 @@ long get_timezone(void)
 {
 #ifdef MSTD_WINDOWS
 	TIME_ZONE_INFORMATION tmp;
-
 	GetTimeZoneInformation(&tmp);
 	return tmp.Bias * 60;
 #else
@@ -73,10 +72,10 @@ long get_timezone(void)
 
 int is_leap_year(time_t year) 
 {
-    if (year % 4) return 0;         /* A year not divisible by 4 is not leap. */
-    else if (year % 100) return 1;  /* If div by 4 and not 100 is surely leap. */
-    else if (year % 400) return 0;  /* If div by 100 *and* not by 400 is not leap. */
-    else return 1;                  /* If div by 100 and 400 is leap. */
+    if (year % 4) return 0;         
+    else if (year % 100) return 1;  
+    else if (year % 400) return 0;  
+    else return 1;
 }
 
 void nolocks_localtime(struct tm *tmp, time_t t, time_t tz, int dst) 
@@ -85,35 +84,28 @@ void nolocks_localtime(struct tm *tmp, time_t t, time_t tz, int dst)
     const time_t secs_hour = 3600;
     const time_t secs_day = 3600*24;
 
-    t -= tz;                            /* Adjust for timezone. */
-    t += 3600*dst;                      /* Adjust for daylight time. */
-    time_t days = t / secs_day;         /* Days passed since epoch. */
-    time_t seconds = t % secs_day;      /* Remaining seconds. */
+    t -= tz;                            
+    t += 3600*dst;                     
+    time_t days = t / secs_day;         
+    time_t seconds = t % secs_day;      
 
     tmp->tm_isdst = dst;
     tmp->tm_hour = seconds / secs_hour;
     tmp->tm_min = (seconds % secs_hour) / secs_min;
     tmp->tm_sec = (seconds % secs_hour) % secs_min;
 
-    /* 1/1/1970 was a Thursday, that is, day 4 from the POV of the tm structure
-     * where sunday = 0, so to calculate the day of the week we have to add 4
-     * and take the modulo by 7. */
     tmp->tm_wday = (days+4)%7;
 
     /* Calculate the current year. */
     tmp->tm_year = 1970;
     while(1) {
-        /* Leap years have one day more. */
         time_t days_this_year = 365 + is_leap_year(tmp->tm_year);
         if (days_this_year > days) break;
         days -= days_this_year;
         tmp->tm_year++;
     }
-    tmp->tm_yday = days;  /* Number of day of the current year. */
+    tmp->tm_yday = days;
 
-    /* We need to calculate in which month and day of the month we are. To do
-     * so we need to skip days according to how many days there are in each
-     * month, and adjust for the leap year that has one more day in February. */
     int mdays[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     mdays[1] += is_leap_year(tmp->tm_year);
 
@@ -149,7 +141,6 @@ void gettimeofday_ex(timeval* tv, void* /*tz*/)
 tm to_tm(time_t t, time_t tz)
 {
     struct tm _tm;
-    // 不采用夏令时
 	nolocks_localtime(&_tm, t, tz, 0);
     return _tm;
 }
@@ -213,10 +204,6 @@ class Log
 public:
     Log()
     {
-//#if defined(WIN32) && defined(UNICODE)
-//        static std::locale locale("");
-//        std::wcout.imbue(locale);
-//#endif
 #ifdef MSTD_WINDOWS  
         _tzset();
 #else
@@ -281,7 +268,7 @@ public:
         pos += snprintf(buffer + pos, size - pos, "[%04x]", mstd::get_current_thread_id());
         if (pos >= size) return;
 
-        pos += snprintf(buffer + pos, size - pos, "[%s]", get_level_string(level));
+        pos += snprintf(buffer + pos, size - pos, "[%s]", level_string(level));
         if (pos >= size) return;
 
         pos += snprintf(buffer + pos, size - pos, "[%s:%d]", mstd::get_last_path(filename).c_str(), line);
@@ -294,7 +281,6 @@ public:
         if (pos >= size) return;
 
         if (size - pos >= 1) {
-            //buffer[pos++] = '\r';
             buffer[pos++] = '\n';
         }
 

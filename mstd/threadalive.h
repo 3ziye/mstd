@@ -13,8 +13,7 @@ namespace mstd {
 
         void Register(ThreadMgrBase* mgr);
         void Unregister(ThreadMgrBase* mgr);
-        bool IsAlive(std::string&) { return false; }
-
+        
     private:
         virtual bool onInit() { return true; }
         virtual void onUninit() {}
@@ -25,5 +24,4 @@ namespace mstd {
         std::set<ThreadMgrBase*> mgrs_;
         uint64_t last_test_tick_;
     };
-    typedef mstd::Singleton<ThreadAlive> SingletonThreadAlive;
 }

@@ -13,11 +13,9 @@ namespace mstd {
         std::string Name() { return mgr_name_; }
         void RegisterAlive();
         void UnregisterAlive();
-
-        virtual bool IsAlive(std::string& info) = 0;
+        virtual bool IsDead(std::string&) { return false; };
     protected:
         std::string mgr_name_;
-
     private:
         static std::recursive_mutex mutex_;
         static bool alive_create_;

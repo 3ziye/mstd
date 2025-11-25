@@ -5,6 +5,7 @@
 #include "./threadalive.h"
 
 namespace mstd {
+    ThreadAlive thread_alive_;
     bool ThreadMgrBase::alive_create_ = false;
     uint32_t ThreadMgrBase::mgr_count_ = 0;
     std::recursive_mutex ThreadMgrBase::mutex_;
@@ -15,7 +16,7 @@ namespace mstd {
         LOGFMTI("Create Mgr=%s, this=0x%p, MgrCnt=%d.", name, this, mgr_count_ + 1);
         if (!alive_create_) {
             alive_create_ = true;
-            SingletonThreadAlive::instance().Init();
+            thread_alive_.Init();
         }
         ++mgr_count_;
         mutex_.unlock();
@@ -25,17 +26,16 @@ namespace mstd {
         mutex_.lock();
         LOGFMTI("Destroy Mgr=%s, this=0x%p, MgrCnt=%d", mgr_name_.c_str(), this, mgr_count_ - 1);
         if (--mgr_count_ == 1) {
-            SingletonThreadAlive::instance().Uninit();
-            SingletonThreadAlive::release();
+            thread_alive_.Uninit();
         }
         mutex_.unlock();
     }
 
     void ThreadMgrBase::RegisterAlive() {
-        SingletonThreadAlive::instance().Register(this);
+        thread_alive_.Register(this);
     }
 
     void ThreadMgrBase::UnregisterAlive() {
-        SingletonThreadAlive::instance().Unregister(this);
+        thread_alive_.Unregister(this);
     }
 };

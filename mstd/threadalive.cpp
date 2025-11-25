@@ -11,7 +11,7 @@ namespace mstd {
             std::lock_guard<std::mutex> guard(mutex_);
             for (auto Mgr : mgrs_) {
                 std::string info;
-                if (Mgr->IsAlive(info)) {
+                if (Mgr->IsDead(info)) {
                     LOGFMTE("ThreadAlive Thread TimeOut, info=%s", info.c_str());
                     //exit
                     break;
