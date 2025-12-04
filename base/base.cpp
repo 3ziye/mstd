@@ -12,6 +12,7 @@
 #include "mstd/crc32.h"
 #include "mstd/serialize.h"
 #include "mstd/datetime.h"
+#include "mstd/hex.h"
 #include "ProcessMgr.h"
 
 void initLog() {
@@ -41,6 +42,8 @@ struct Body {
 };
 
 int main() {
+	std::string s = mstd::to_hex("1", 1);
+
 	std::string path = mstd::compose_path("C:\\", "abc", "def", "ghi", "k.exe");
 	std::wstring path2 = mstd::compose_path(L"C:", L"abc", L"def", L"ghi", std::wstring(L"k.exe"));
 	testdatatime();
