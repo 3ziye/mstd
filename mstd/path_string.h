@@ -74,15 +74,39 @@ namespace mstd
 #endif
 	}
 
-std::string  compose_path(const char* first, const char* last);
-std::string  compose_path(const std::string& first, const std::string& last);
-std::wstring compose_path(const wchar_t* first, const wchar_t* last);
-std::wstring compose_path(const std::wstring& first, const std::wstring& last);
+	template<typename... Args>
+	std::string compose_path(const std::string& base, Args&&... args) {
+		std::string path = base;
+		auto add_part = [&path](const std::string& part) {
+			if (!path.empty() && !is_system_slash<char>(path.back())) {
+				path.append(1, system_slash<char>());
+			}
 
-std::string  compose_path(const char* first, const char* second, const char* third);
-std::string  compose_path(const std::string& first, const std::string& second, const std::string& third);
-std::wstring compose_path(const wchar_t* first, const wchar_t* last, const wchar_t* third);
-std::wstring compose_path(const std::wstring& first, const std::wstring& second, const std::wstring& third);
+			if (!part.empty()) {
+				path.append(part);
+			}
+		};
+
+		(add_part(std::forward<Args>(args)), ...);
+		return std::move(path);
+	}
+
+	template<typename... Args>
+	std::wstring compose_path(const std::wstring& base, Args&&... args) {
+		std::wstring path = base;
+		auto add_part = [&path](const std::wstring& part) {
+			if (!path.empty() && !is_system_slash<wchar_t>(path.back())) {
+				path.append(1, system_slash<wchar_t>());
+			}
+
+			if (!part.empty()) {
+				path.append(part);
+			}
+		};
+
+		(add_part(std::forward<Args>(args)), ...);
+		return std::move(path);
+	}
 
 
 std::string  get_parent_path(const char* path);

@@ -127,42 +127,6 @@ std::basic_string<CharT> _get_file_suffix(
     return suffix;
 }
 
-std::string compose_path(const char* first, const char* last)
-{
-    return _compose_path(first, last);
-}
-
-std::string compose_path(const std::string& first, const std::string& last)
-{
-    return _compose_path(first.c_str(), last.c_str());
-}
-
-std::wstring compose_path(const wchar_t* first, const wchar_t* last)
-{
-    return _compose_path(first, last);
-}
-
-std::wstring compose_path(const std::wstring& first, const std::wstring& last)
-{
-    return _compose_path(first.c_str(), last.c_str());
-}
-
-std::string  compose_path(const char* first, const char* second, const char* third) {
-    return _compose_path(_compose_path(first, second).c_str(), third);
-}
-
-std::string  compose_path(const std::string& first, const std::string& second, const std::string& third) {
-    return _compose_path(_compose_path(first.c_str(), second.c_str()).c_str(), third.c_str());
-}
-
-std::wstring compose_path(const wchar_t* first, const wchar_t* second, const wchar_t* third) {
-    return _compose_path(_compose_path(first, second).c_str(), third);
-}
-
-std::wstring compose_path(const std::wstring& first, const std::wstring& second, const std::wstring& third) {
-    return _compose_path(_compose_path(first.c_str(), second.c_str()).c_str(), third.c_str());
-}
-
 std::string get_parent_path(const char* path)
 {
     return _get_parent_path(path);

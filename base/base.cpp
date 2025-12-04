@@ -41,6 +41,8 @@ struct Body {
 };
 
 int main() {
+	std::string path = mstd::compose_path("C:\\", "abc", "def", "ghi", "k.exe");
+	std::wstring path2 = mstd::compose_path(L"C:", L"abc", L"def", L"ghi", std::wstring(L"k.exe"));
 	testdatatime();
 	Body b;
 	b.Name = "dcsdfaffffffffff";
