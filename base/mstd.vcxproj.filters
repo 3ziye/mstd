@@ -65,9 +65,6 @@
     <ClCompile Include="..\mstd\threadmgrbase.cpp">
       <Filter>source\mstd</Filter>
     </ClCompile>
-    <ClCompile Include="..\mstd\threadalive.cpp">
-      <Filter>source\mstd</Filter>
-    </ClCompile>
     <ClCompile Include="ProcessMgr.cpp">
       <Filter>source</Filter>
     </ClCompile>
@@ -119,9 +116,6 @@
       <Filter>source\mstd</Filter>
     </ClInclude>
     <ClInclude Include="..\mstd\log.h">
-      <Filter>source\mstd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\mstd\threadalive.h">
       <Filter>source\mstd</Filter>
     </ClInclude>
     <ClInclude Include="..\mstd\threadmgr.h">

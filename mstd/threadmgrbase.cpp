@@ -1,10 +1,58 @@
 ﻿
 
-#include "./threadmgrbase.h"
+#include "./threadmgr.h"
 #include "./log.h"
-#include "./threadalive.h"
+#include <set>
 
 namespace mstd {
+	class ThreadAlive : public ThreadMgr<ThreadAlive> {
+	public:
+		ThreadAlive() : ThreadMgr<ThreadAlive>("ThreadAlive")
+			, last_test_tick_(mstd::get_tick_count()) {
+		}
+		virtual ~ThreadAlive() {}
+
+		void Register(ThreadMgrBase* mgr) {
+			mutex_.lock();
+			if (this != mgr) {
+				mgrs_.insert(mgr);
+			}
+			mutex_.unlock();
+		}
+
+		void Unregister(ThreadMgrBase* mgr) {
+			mutex_.lock();
+			mgrs_.erase(mgr);
+			mutex_.unlock();
+		}
+
+	private:
+		virtual bool onInit() { return true; }
+		virtual void onUninit() {}
+		virtual void onIdle() {
+			uint64_t dwTick = mstd::get_tick_count();
+			//10秒检测一次各个注册的ThreadMgr线程运行是否顺畅
+			if (dwTick - last_test_tick_ > 10000) {
+				std::lock_guard<std::mutex> guard(mutex_);
+				for (auto Mgr : mgrs_) {
+					std::string info;
+					if (Mgr->IsDead(info)) {
+						LOGFMTE("ThreadAlive Thread TimeOut, info=%s", info.c_str());
+						//exit
+						break;
+					}
+				}
+
+				last_test_tick_ = mstd::get_tick_count();
+			}
+		}
+		virtual void onTimer(const uint32_t) {};
+	private:
+		std::mutex mutex_;
+		std::set<ThreadMgrBase*> mgrs_;
+		uint64_t last_test_tick_;
+	};
+
     ThreadAlive *thread_alive_;
     bool ThreadMgrBase::alive_create_ = false;
     uint32_t ThreadMgrBase::mgr_count_ = 0;

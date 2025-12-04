@@ -159,7 +159,6 @@
     <ClCompile Include="..\mstd\string.cpp" />
     <ClCompile Include="..\mstd\string_convert.cpp" />
     <ClCompile Include="..\mstd\system.cpp" />
-    <ClCompile Include="..\mstd\threadalive.cpp" />
     <ClCompile Include="..\mstd\threadmgrbase.cpp" />
     <ClCompile Include="base.cpp" />
     <ClCompile Include="ProcessMgr.cpp" />
@@ -183,7 +182,6 @@
     <ClInclude Include="..\mstd\string.h" />
     <ClInclude Include="..\mstd\string_convert.h" />
     <ClInclude Include="..\mstd\system.h" />
-    <ClInclude Include="..\mstd\threadalive.h" />
     <ClInclude Include="..\mstd\threadmgr.h" />
     <ClInclude Include="..\mstd\threadmgrbase.h" />
     <ClInclude Include="..\mstd\threadpool.h" />
